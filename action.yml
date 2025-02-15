@@ -161,10 +161,6 @@ runs:
         retVal=$?
         timeEnd
         statusBuild
-
-    - name: 🥢 Set Release Properties
-      shell: bash
-      run: |
         EV1=$(TZ=Asia/Jakarta date +%Y%m%d)
         EV2=$(grep "PRODUCT_MODEL :=" ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/${{ inputs.DEVICE_PATH }}/twrp_*.mk -m 1 | cut -d = -f 2)
         EV3=$(ls -lh ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f5)
@@ -182,38 +178,13 @@ runs:
         echo "ORF_REPONAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
         echo "ORF_ID=${{ github.run_id }}" >> $GITHUB_ENV
         echo "ORF_TIME=${EV10}" >> $GITHUB_ENV
-        echo "GH_RELEASE=${{ inputs.GH_RELEASE }}" >> $GITHUB_ENV
-
-    - name: 📤 Upload to Release
-      if: ${{ env.GH_RELEASE }} == 'true'
-      uses: softprops/action-gh-release@v2
-      with:
-        files: |
-          OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip
-          OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip.md5
-        name: 🦊 OrangeFox Recovery for ${{ env.DEVICE }} (${{ env.CODENAME }}) // ${{ env.BUILD_DATE }}
-        tag_name: ${{ github.run_id }}
-        body: |
-          ## OrangeFox Recovery Build - Unofficial
-          🖥OrangeFox-Branch: ${{ env.FOX_BRANCH }}
-          📱Device: ${{ env.DEVICE }}
-          📝CodeName: ${{ env.CODENAME }}
-          📂Size: ${{ env.ORF_SIZE }}
-          📕MD5: ${{ env.ORF_MD5 }}
-          📘SHA1: ${{ env.ORF_SHA1 }}
-          👩‍💻Commit: ${{ env.DT_COMMIT }}
-      env:
-        FOX_BRANCH: ${{ inputs.FOX_SYNC_BRANCH }}
-        CODENAME: ${{ inputs.DEVICE_NAME }}
-
-    - name: 🛰️ Post Build
-      if: ${{ env.GH_RELEASE }} == 'true'
-      shell: bash
-      env:
-        TG_CHAT_ID: ${{ inputs.TG_CHAT_ID }}
-        TG_TOKEN: ${{ inputs.TG_TOKEN }}
-        FOX_BRANCH: ${{ inputs.FOX_SYNC_BRANCH }}
-        CODENAME: ${{ inputs.DEVICE_NAME }}
-      run: |
-        source config.sh
-        post_message
+        if [[ "${{ inputs.GH_RELEASE }}" == true ]]; then
+            bash notes.sh
+            gh auth login --with-token <<< ${GH_TOKEN}
+            gh release create ${{ github.run_id }} ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/* --title "🦊 OrangeFox Recovery for ${{ env.DEVICE }} (${{ env.CODENAME }}) // ${{ env.BUILD_DATE }}" -F ${GITHUB_WORKSPACE}/release-notes.md
+            post_message
+        else
+            echo -e ${cya} "##########################################"
+            echo -e ${cya} "$(figlet "OrageFox")"
+            echo -e ${cya} "##########################################"
+        fi
