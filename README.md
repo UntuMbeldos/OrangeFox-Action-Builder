@@ -1,6 +1,8 @@
 # OrangeFox Action Builder
 🦊 A Workflow to build OrangeFox recovery automatically
+
 ![banner](https://i.imgur.com/hdLJ3Hi.png "banner")
+
 [![](https://img.shields.io/github/actions/workflow/status/UntuMbeldos/OrangeFox-Action-Builder/test.yml?style=for-the-badge&color=fee4d0&logo=githubactions&logoColor=fee4d0)](https://github.com/UntuMbeldos/OrangeFox-Action-Builder/actions/workflows/test.yml)
 [![](https://img.shields.io/github/issues/UntuMbeldos/OrangeFox-Action-Builder?style=for-the-badge&color=fee4d0&logo=files&logoColor=fee4d0)](https://github.com/UntuMbeldos/OrangeFox-Action-Builder/issues)
 [![](https://img.shields.io/github/stars/UntuMbeldos/OrangeFox-Action-Builder?style=for-the-badge&color=fee4d0&logo=starship&logoColor=fee4d0)](https://github.com/UntuMbeldos/OrangeFox-Action-Builder/stargazers)
@@ -50,7 +52,6 @@ jobs:
         MAINTAINER_URL: 'https://i.ibb.co.com/8gyjXq06/maintainer.png'
         GH_RELEASE: 'true'
 ```
-Or use the [preset workflow file](https://github.com/UntuMbeldos/OrangeFox-Action-Builder/blob/main/.github/workflows/test.yml) to modify it.
 
 > [!NOTE]
 > You do not need to fork this repository.
