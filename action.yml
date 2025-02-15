@@ -13,7 +13,7 @@ inputs:
     default: "https://gitlab.com/OrangeFox/sync.git"
   FOX_SYNC_BRANCH:
     description: "Branch On Orangefox For Sync"
-    required: true
+    required: false
     default: "12.1"
   KERNEL_TREE:
     description: 'Kernel Tree On Your Device'
@@ -98,9 +98,10 @@ runs:
     - name: 🏢 Build Environment
       shell: bash
       run: |
-        sudo apt install aria2 figlet -y
+        sudo apt-get install apt-utils aria2 figlet -y
         git clone https://github.com/akhilnarang/scripts.git -b master .sc
         sudo bash .sc/setup/android_build_env.sh
+        sudo apt-get install python3-all-dev libtinfo6 libncurses6 libncurses-dev libncurses5-dev lsb-release lsb-base
 
     - name: 🎡 Set-up Manifest Sync
       shell: bash
@@ -116,15 +117,31 @@ runs:
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
         git clone ${{ inputs.FOX_SYNC }} && cd sync
         ./orangefox_sync.sh --branch ${{ inputs.FOX_SYNC_BRANCH }} --path ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
-        if [[ ! -z "${{ inputs.MAINTAINER_URL }}" ]]; then
-            echo -e ${cya} "Change Maintainer Profile..."
-            wget ${{ inputs.MAINTAINER_URL }} -O ${GITHUB_ACTION_PATH}/maintainer.png
-            cp -r ${GITHUB_ACTION_PATH}/maintainer.png ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/bootable/recovery/gui/theme/portrait_hdpi/images/Default/About
-        fi
         cd ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
         if [[ ! -d bootable/recovery/gui/theme ]]; then
             echo -e ${cya} "Adding Theme..."
             git clone https://gitlab.com/OrangeFox/misc/theme.git bootable/recovery/gui/theme
+        fi
+        if [[ ! -d external/nano ]]; then
+            echo -e ${cya} "Adding Nano Library..."
+            git clone https://github.com/LineageOS/android_external_nano -b lineage-19.1 external/nano
+        fi
+        if [[ ! -d external/libncurses ]]; then
+            echo -e ${cya} "Adding libncurses Library..."
+            git clone https://github.com/LineageOS/android_external_libncurses -b lineage-19.1 external/libncurses
+        fi
+        if [[ ! -d external/bash ]]; then
+            echo -e ${cya} "Adding Bash Library..."
+            git clone https://github.com/LineageOS/android_external_bash -b lineage-19.1 external/bash
+        fi
+        if [[ ! -d external/lptools ]]; then
+            echo -e ${cya} "Adding lptools Library..."
+            git clone https://github.com/phhusson/vendor_lptools external/lptools
+        fi
+        if [[ ! -z "${{ inputs.MAINTAINER_URL }}" ]]; then
+            echo -e ${cya} "Change Maintainer Profile..."
+            wget ${{ inputs.MAINTAINER_URL }} -O ${GITHUB_ACTION_PATH}/maintainer.png
+            cp -r ${GITHUB_ACTION_PATH}/maintainer.png /bootable/recovery/gui/theme/portrait_hdpi/images/Default/About
         fi
         if [[ ! -z "${{ inputs.KERNEL_TREE }}" ]]; then
             echo -e ${cya} "Clonning Kernel Tree..."
