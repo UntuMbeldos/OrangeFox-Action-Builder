@@ -1,6 +1,6 @@
 # OrangeFox Action Builder
 🦊 A Workflow to build OrangeFox recovery automatically
-
+![banner](https://i.imgur.com/hdLJ3Hi.png "banner")
 [![](https://img.shields.io/github/actions/workflow/status/UntuMbeldos/OrangeFox-Action-Builder/test.yml?style=for-the-badge&color=fee4d0&logo=githubactions&logoColor=fee4d0)](https://github.com/UntuMbeldos/OrangeFox-Action-Builder/actions/workflows/test.yml)
 [![](https://img.shields.io/github/issues/UntuMbeldos/OrangeFox-Action-Builder?style=for-the-badge&color=fee4d0&logo=files&logoColor=fee4d0)](https://github.com/UntuMbeldos/OrangeFox-Action-Builder/issues)
 [![](https://img.shields.io/github/stars/UntuMbeldos/OrangeFox-Action-Builder?style=for-the-badge&color=fee4d0&logo=starship&logoColor=fee4d0)](https://github.com/UntuMbeldos/OrangeFox-Action-Builder/stargazers)
@@ -37,7 +37,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: OrangeFox Build Test
-      uses: UntuKemeng/OrangeFox-Action-Builder@v1
+      uses: UntuMbeldos/OrangeFox-Action-Builder@v1
       with:
         FOX_SYNC_BRANCH: '12.1'
         DEVICE_TREE: 'https://github.com/UntuKemeng/ORF_device_vivo_1938'
