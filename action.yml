@@ -4,7 +4,7 @@ author: "AnGgIt86"
 
 branding:
   icon: 'terminal'
-  color: 'gray-dark'
+  color: 'orange'
 
 inputs:
   FOX_SYNC:
