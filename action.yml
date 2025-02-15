@@ -110,7 +110,7 @@ runs:
         ./orangefox_sync.sh --branch ${{ inputs.FOX_SYNC_BRANCH }} --path ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
         if [[ ! -z "${{ inputs.MAINTAINER_URL }}" ]]; then
             echo -e ${cya} "Change Maintainer Profile..."
-            wget ${{ inputs.MAINTAINER_URL }} -o ${GITHUB_WORKSPACE}/maintainer.png
+            wget -O ${GITHUB_WORKSPACE}/maintainer.png ${{ inputs.MAINTAINER_URL }}
             cp -r ${GITHUB_WORKSPACE}/maintainer.png ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/bootable/recovery/gui/theme/portrait_hdpi/images/Default/About
         fi
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
