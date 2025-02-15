@@ -25,5 +25,5 @@ jobs:
         BUILD_TARGET: 'recovery'
         TG_CHAT_ID: '${{ secrets.TG_CHAT_ID }}'
         TG_TOKEN: '${{ secrets.TG_TOKEN }}'
-        MAINTAINER_URL: 'https://i.imgur.com/MpuntQt.png'
+        MAINTAINER_URL: 'https://i.ibb.co.com/8gyjXq06/maintainer.png'
         GH_RELEASE: 'false'

@@ -62,7 +62,7 @@ inputs:
   MAINTAINER_URL:
     description: 'Image size must be 192x192'
     required: true
-    default: 'https://i.imgur.com/MpuntQt.png'
+    default: 'https://i.ibb.co.com/8gyjXq06/maintainer.png'
   GH_RELEASE:
     description: 'Upload Build To Github Release'
     required: true
@@ -110,7 +110,7 @@ runs:
         ./orangefox_sync.sh --branch ${{ inputs.FOX_SYNC_BRANCH }} --path ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
         if [[ ! -z "${{ inputs.MAINTAINER_URL }}" ]]; then
             echo -e ${cya} "Change Maintainer Profile..."
-            wget -O ${GITHUB_WORKSPACE}/maintainer.png ${{ inputs.MAINTAINER_URL }}
+            wget ${{ inputs.MAINTAINER_URL }} -O ${GITHUB_WORKSPACE}/maintainer.png
             cp -r ${GITHUB_WORKSPACE}/maintainer.png ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/bootable/recovery/gui/theme/portrait_hdpi/images/Default/About
         fi
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
