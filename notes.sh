@@ -9,4 +9,4 @@ echo "
 👩‍💻 Top Commit: ${{ env.DT_COMMIT }}
 📕 MD5: ${{ env.ORF_MD5 }}
 📘 SHA1: ${{ env.ORF_SHA1 }}
-" > ${GITHUB_WORKSPACE}/release-notes.md
+" > ${GITHUB_ACTION_PATH}/release-notes.md

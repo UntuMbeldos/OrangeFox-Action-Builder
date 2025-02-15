@@ -89,6 +89,12 @@ runs:
       with:
         swap-size-gb: 15
 
+    - name: 🎡 Set GitHub Path
+      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+
     - name: 🏢 Build Environment
       shell: bash
       run: |
@@ -101,20 +107,21 @@ runs:
       env:
         TG_CHAT_ID: ${{ inputs.TG_CHAT_ID }}
         TG_TOKEN: ${{ inputs.TG_TOKEN }}
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
       run: |
         source config.sh
         echo -e ${cya} "Sync OrangeFox Recovery..."
-        mkdir -p ${GITHUB_WORKSPACE}/OrangeFox && cd ${GITHUB_WORKSPACE}/OrangeFox
+        mkdir -p ${GITHUB_ACTION_PATH}/OrangeFox && cd ${GITHUB_ACTION_PATH}/OrangeFox
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
         git clone ${{ inputs.FOX_SYNC }} && cd sync
-        ./orangefox_sync.sh --branch ${{ inputs.FOX_SYNC_BRANCH }} --path ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
+        ./orangefox_sync.sh --branch ${{ inputs.FOX_SYNC_BRANCH }} --path ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
         if [[ ! -z "${{ inputs.MAINTAINER_URL }}" ]]; then
             echo -e ${cya} "Change Maintainer Profile..."
-            wget ${{ inputs.MAINTAINER_URL }} -O ${GITHUB_WORKSPACE}/maintainer.png
-            cp -r ${GITHUB_WORKSPACE}/maintainer.png ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/bootable/recovery/gui/theme/portrait_hdpi/images/Default/About
+            wget ${{ inputs.MAINTAINER_URL }} -O ${GITHUB_ACTION_PATH}/maintainer.png
+            cp -r ${GITHUB_ACTION_PATH}/maintainer.png ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/bootable/recovery/gui/theme/portrait_hdpi/images/Default/About
         fi
-        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
+        cd ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
         if [[ ! -d bootable/recovery/gui/theme ]]; then
             echo -e ${cya} "Adding Theme..."
             git clone https://gitlab.com/OrangeFox/misc/theme.git bootable/recovery/gui/theme
@@ -139,18 +146,19 @@ runs:
         TG_TOKEN: ${{ inputs.TG_TOKEN }}
         FOX_BRANCH: ${{ inputs.FOX_SYNC_BRANCH }}
         CODENAME: ${{ inputs.DEVICE_NAME }}
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
       run: |
         set +e
         source config.sh
         timeStart
-        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
+        cd ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
         echo -e ${cya} "##########################################"
         echo -e ${cya} "$(figlet "OrageFox")"
         echo -e ${cya} "##########################################"
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
-        BUILDLOG="${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/build.log"
-        DEVICE=$(grep "PRODUCT_MODEL :=" ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/${{ inputs.DEVICE_PATH }}/twrp_*.mk -m 1 | cut -d = -f 2)
+        BUILDLOG="${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/build.log"
+        DEVICE=$(grep "PRODUCT_MODEL :=" ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/${{ inputs.DEVICE_PATH }}/twrp_*.mk -m 1 | cut -d = -f 2)
         set -e
         build_message "lunch twrp_${{ inputs.DEVICE_NAME }}-eng"
         lunch twrp_${{ inputs.DEVICE_NAME }}-eng
@@ -162,12 +170,12 @@ runs:
         timeEnd
         statusBuild
         EV1=$(TZ=Asia/Jakarta date +%Y%m%d)
-        EV2=$(grep "PRODUCT_MODEL :=" ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/${{ inputs.DEVICE_PATH }}/twrp_*.mk -m 1 | cut -d = -f 2)
-        EV3=$(ls -lh ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f5)
-        EV4=$(md5sum ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f1)
-        EV5=$(sha1sum ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f1)
-        EV6=$(cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/${{ inputs.DEVICE_PATH }} && git log --pretty=format:'%s' -1)
-        EV10=$(grep "#### build completed successfully" ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/build.log -m 1 | cut -d '(' -f 2)
+        EV2=$(grep "PRODUCT_MODEL :=" ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/${{ inputs.DEVICE_PATH }}/twrp_*.mk -m 1 | cut -d = -f 2)
+        EV3=$(ls -lh ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f5)
+        EV4=$(md5sum ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f1)
+        EV5=$(sha1sum ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f1)
+        EV6=$(cd ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/${{ inputs.DEVICE_PATH }} && git log --pretty=format:'%s' -1)
+        EV10=$(grep "#### build completed successfully" ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/build.log -m 1 | cut -d '(' -f 2)
         echo "BUILD_DATE=${EV1}" >> $GITHUB_ENV
         echo "DEVICE=${EV2}" >> $GITHUB_ENV
         echo "ORF_SIZE=${EV3}" >> $GITHUB_ENV
@@ -181,7 +189,7 @@ runs:
         if [[ "${{ inputs.GH_RELEASE }}" == true ]]; then
             bash notes.sh
             gh auth login --with-token <<< ${GH_TOKEN}
-            gh release create ${{ github.run_id }} ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/* --title "🦊 OrangeFox Recovery for ${{ env.DEVICE }} (${{ env.CODENAME }}) // ${{ env.BUILD_DATE }}" -F ${GITHUB_WORKSPACE}/release-notes.md
+            gh release create ${{ github.run_id }} ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/* --title "🦊 OrangeFox Recovery for ${{ env.DEVICE }} (${{ env.CODENAME }}) // ${{ env.BUILD_DATE }}" -F ${GITHUB_ACTION_PATH}/release-notes.md
             post_message
         else
             echo -e ${cya} "##########################################"
