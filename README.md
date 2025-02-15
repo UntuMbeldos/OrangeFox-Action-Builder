@@ -77,3 +77,10 @@ jobs:
 | GH_RELEASE | true | Upload Build To Github Release | Default is [false] |
 | TG_CHAT_ID | false | Telegram Chat ID | -123456789 |
 | TG_TOKEN | false | Telegram Bot Token | 123456:12345678987654321 |
+
+## Credits
+- [slimhub_actions](https://github.com/rokibhasansagar/slimhub_actions)
+- [carlodandan](https://github.com/carlodandan/OrangeFox-Action-Builder)
+- [kinguser981](https://github.com/kinguser981/OrangeFox-Recovery-Builder-2024)
+- [azwhikaru](https://github.com/azwhikaru/Action-OFRP-Builder)
+- [dabao1955](https://github.com/dabao1955/kernel_build_action)
