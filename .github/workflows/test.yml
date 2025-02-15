@@ -14,7 +14,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
               
-    - name: OrangeFox Build Test
+    - name: OrangeFox Build
       uses: ./
       with:
         FOX_SYNC_BRANCH: '12.1'

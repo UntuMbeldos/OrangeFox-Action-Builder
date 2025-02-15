@@ -38,7 +38,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: OrangeFox Build Test
+    - name: OrangeFox Build
       uses: UntuMbeldos/OrangeFox-Action-Builder@v1
       with:
         FOX_SYNC_BRANCH: '12.1'
