@@ -141,7 +141,7 @@ runs:
         if [[ ! -z "${{ inputs.MAINTAINER_URL }}" ]]; then
             echo -e ${cya} "Change Maintainer Profile..."
             wget ${{ inputs.MAINTAINER_URL }} -O ${GITHUB_ACTION_PATH}/maintainer.png
-            cp -r ${GITHUB_ACTION_PATH}/maintainer.png /bootable/recovery/gui/theme/portrait_hdpi/images/Default/About
+            cp -r ${GITHUB_ACTION_PATH}/maintainer.png bootable/recovery/gui/theme/portrait_hdpi/images/Default/About
         fi
         if [[ ! -z "${{ inputs.KERNEL_TREE }}" ]]; then
             echo -e ${cya} "Clonning Kernel Tree..."
