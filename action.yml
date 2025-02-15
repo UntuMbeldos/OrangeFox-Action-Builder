@@ -67,6 +67,7 @@ inputs:
     description: 'Upload Build To Github Release'
     required: true
     default: 'true'
+    type: boolean
   TG_CHAT_ID:
     description: 'Telegram Chat ID'
     required: false
@@ -181,9 +182,10 @@ runs:
         echo "ORF_REPONAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
         echo "ORF_ID=${{ github.run_id }}" >> $GITHUB_ENV
         echo "ORF_TIME=${EV10}" >> $GITHUB_ENV
+        echo "GH_RELEASE=${{ inputs.GH_RELEASE }}" >> $GITHUB_ENV
 
     - name: 📤 Upload to Release
-      if: ${{ github.event.inputs.GH_RELEASE }} == 'true'
+      if: ${{ env.GH_RELEASE }} == 'true'
       uses: softprops/action-gh-release@v2
       with:
         files: |
@@ -205,7 +207,7 @@ runs:
         CODENAME: ${{ inputs.DEVICE_NAME }}
 
     - name: 🛰️ Post Build
-      if: ${{ github.event.inputs.GH_RELEASE }} == 'true'
+      if: ${{ env.GH_RELEASE }} == 'true'
       shell: bash
       env:
         TG_CHAT_ID: ${{ inputs.TG_CHAT_ID }}
