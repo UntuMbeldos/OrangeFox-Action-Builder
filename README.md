@@ -41,7 +41,6 @@ jobs:
     - name: OrangeFox Build
       uses: UntuMbeldos/OrangeFox-Action-Builder@v1
       with:
-        FOX_SYNC_BRANCH: '12.1'
         DEVICE_TREE: 'https://github.com/UntuKemeng/ORF_device_vivo_1938'
         DEVICE_TREE_BRANCH: '12.1'
         DEVICE_PATH: 'device/vivo/1938'
