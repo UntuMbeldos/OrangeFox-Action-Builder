@@ -1,0 +1,211 @@
+name: "Orangefox Recovery"
+description: "Building OrangeFox Recovery Using Github Action"
+author: "AnGgIt86"
+
+branding:
+  icon: 'terminal'
+  color: 'gray-dark'
+
+inputs:
+  FOX_SYNC:
+    description: "Source On OrangeFox Recovery"
+    required: false
+    default: "https://gitlab.com/OrangeFox/sync.git"
+  FOX_SYNC_BRANCH:
+    description: "Branch On Orangefox For Sync"
+    required: true
+    default: "12.1"
+  KERNEL_TREE:
+    description: 'Kernel Tree On Your Device'
+    required: false
+    default: ''
+  KERNEL_BRANCH:
+    description: 'Branch On Your Kernel Tree'
+    required: false
+    default: ''
+  KERNEL_PATH:
+    description: 'Path On Your Kernel Directory'
+    required: false
+    default: 'kernel/vivo/1938'
+  DEVICE_TREE:
+    description: 'OrangeFox Device Tree'
+    required: true
+    default: 'https://github.com/UntuKemeng/ORF_device_vivo_1938'
+  DEVICE_TREE_BRANCH:
+    description: 'OrangeFox Device Tree Branch'
+    required: true
+    default: '12.1'
+  DEVICE_PATH:
+    description: 'Specify Your Device Path'
+    required: true
+    default: 'device/vivo/1938'
+  DEVICE_NAME:
+    description: 'Specify Your Device Codename'
+    required: true
+    default: '1938'
+  BUILD_TARGET:
+    description: 'Specify Your Build Target [boot, recovery, vendorboot'
+    required: true
+    default: 'recovery'
+  COMMON_TREE:
+    description: 'Common Tree On Your Device'
+    required: false
+    default: ''
+  COMMON_BRANCH:
+    description: 'Branch On Your Common Tree'
+    required: false
+    default: ''
+  COMMON_PATH:
+    description: 'Path On Your Common Directory'
+    required: false
+    default: 'common/vivo/1938'
+  MAINTAINER_URL:
+    description: 'Image size must be 192x192'
+    required: true
+    default: 'https://i.imgur.com/MpuntQt.png'
+  TG_CHAT_ID:
+    description: 'Telegram Chat ID'
+    required: false
+    default: ''
+  TG_TOKEN:
+    description: 'Telegram Bot Token'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: 🗑️ Clean-up
+      uses: rokibhasansagar/slimhub_actions@main
+
+    - name: 💽 Swap Space
+      uses: pierotofy/set-swap-space@master
+      with:
+        swap-size-gb: 15
+
+    - name: 🏢 Build Environment
+      shell: bash
+      run: |
+        sudo apt install aria2 figlet -y
+        git clone https://github.com/akhilnarang/scripts.git -b master .sc
+        sudo bash .sc/setup/android_build_env.sh
+
+    - name: 🎡 Set-up Manifest Sync
+      shell: bash
+      env:
+        TG_CHAT_ID: ${{ inputs.TG_CHAT_ID }}
+        TG_TOKEN: ${{ inputs.TG_TOKEN }}
+      run: |
+        source config.sh
+        echo -e ${cya} "Sync OrangeFox Recovery..."
+        mkdir -p ${GITHUB_WORKSPACE}/OrangeFox && cd ${GITHUB_WORKSPACE}/OrangeFox
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+        git clone ${{ inputs.FOX_SYNC }} && cd sync
+        ./orangefox_sync.sh --branch ${{ inputs.FOX_SYNC_BRANCH }} --path ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
+        if [[ ! -z "${{ inputs.MAINTAINER_URL }}" ]]; then
+            echo -e ${cya} "Change Maintainer Profile..."
+            wget ${{ inputs.MAINTAINER_URL }} -o ${GITHUB_WORKSPACE}/maintainer.png
+            cp -r ${GITHUB_WORKSPACE}/maintainer.png ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/bootable/recovery/gui/theme/portrait_hdpi/images/Default/About
+        fi
+        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
+        if [[ ! -d bootable/recovery/gui/theme ]]; then
+            echo -e ${cya} "Adding Theme..."
+            git clone https://gitlab.com/OrangeFox/misc/theme.git bootable/recovery/gui/theme
+        fi
+        if [[ ! -z "${{ inputs.KERNEL_TREE }}" ]]; then
+            echo -e ${cya} "Clonning Kernel Tree..."
+            git clone ${{ inputs.KERNEL_TREE }} -b ${{ inputs.KERNEL_BRANCH }} ${{ inputs.KERNEL_PATH }}
+        fi
+        if [[ ! -z "${{ inputs.COMMON_TREE }}" ]]; then
+            echo -e ${cya} "Clonning Common Tree..."
+            git clone ${{ inputs.COMMON_TREE }} -b ${{ inputs.COMMON_BRANCH }} ${{ inputs.COMMON_PATH }}
+        fi
+        if [[ ! -z "${{ inputs.DEVICE_TREE }}" ]]; then
+            echo -e ${cya} "Clonning Device Tree..."
+            git clone ${{ inputs.DEVICE_TREE }} -b ${{ inputs.DEVICE_TREE_BRANCH }} ${{ inputs.DEVICE_PATH }}
+        fi
+
+    - name: 🦊 Building OrangeFox
+      shell: bash
+      env:
+        TG_CHAT_ID: ${{ inputs.TG_CHAT_ID }}
+        TG_TOKEN: ${{ inputs.TG_TOKEN }}
+        FOX_BRANCH: ${{ inputs.FOX_SYNC_BRANCH }}
+        CODENAME: ${{ inputs.DEVICE_NAME }}
+      run: |
+        set +e
+        source config.sh
+        timeStart
+        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
+        echo -e ${cya} "##########################################"
+        echo -e ${cya} "$(figlet "OrageFox")"
+        echo -e ${cya} "##########################################"
+        source build/envsetup.sh
+        export ALLOW_MISSING_DEPENDENCIES=true
+        BUILDLOG="${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/build.log"
+        DEVICE=$(grep "PRODUCT_MODEL :=" ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/${{ inputs.DEVICE_PATH }}/twrp_*.mk -m 1 | cut -d = -f 2)
+        set -e
+        build_message "lunch twrp_${{ inputs.DEVICE_NAME }}-eng"
+        lunch twrp_${{ inputs.DEVICE_NAME }}-eng
+        sleep 5
+        build_message "Building... 🛠️"
+        mkfifo -m 644 reading
+        tee -a ${BUILDLOG} < reading & progress & mka adbd ${{ inputs.BUILD_TARGET }}image -j$(nproc --all) > reading
+        retVal=$?
+        timeEnd
+        statusBuild
+
+    - name: 🥢 Set Release Properties
+      shell: bash
+      run: |
+        EV1=$(TZ=Asia/Jakarta date +%Y%m%d)
+        EV2=$(grep "PRODUCT_MODEL :=" ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/${{ inputs.DEVICE_PATH }}/twrp_*.mk -m 1 | cut -d = -f 2)
+        EV3=$(ls -lh ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f5)
+        EV4=$(md5sum ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f1)
+        EV5=$(sha1sum ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f1)
+        EV6=$(cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/${{ inputs.DEVICE_PATH }} && git log --pretty=format:'%s' -1)
+        EV10=$(grep "#### build completed successfully" ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/build.log -m 1 | cut -d '(' -f 2)
+        echo "BUILD_DATE=${EV1}" >> $GITHUB_ENV
+        echo "DEVICE=${EV2}" >> $GITHUB_ENV
+        echo "ORF_SIZE=${EV3}" >> $GITHUB_ENV
+        echo "ORF_MD5=${EV4}" >> $GITHUB_ENV
+        echo "ORF_SHA1=${EV5}" >> $GITHUB_ENV
+        echo "DT_COMMIT=${EV6}" >> $GITHUB_ENV
+        echo "ORF_ACTOR=${{ github.actor }}" >> $GITHUB_ENV
+        echo "ORF_REPONAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
+        echo "ORF_ID=${{ github.run_id }}" >> $GITHUB_ENV
+        echo "ORF_TIME=${EV10}" >> $GITHUB_ENV
+
+    - name: 📤 Upload to Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip
+          OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip.md5
+        name: 🦊 OrangeFox Recovery for ${{ env.DEVICE }} (${{ env.CODENAME }}) // ${{ env.BUILD_DATE }}
+        tag_name: ${{ github.run_id }}
+        body: |
+          ## OrangeFox Recovery Build - Unofficial
+          🖥OrangeFox-Branch: ${{ env.FOX_BRANCH }}
+          📱Device: ${{ env.DEVICE }}
+          📝CodeName: ${{ env.CODENAME }}
+          📂Size: ${{ env.ORF_SIZE }}
+          📕MD5: ${{ env.ORF_MD5 }}
+          📘SHA1: ${{ env.ORF_SHA1 }}
+          👩‍💻Commit: ${{ env.DT_COMMIT }}
+      env:
+        FOX_BRANCH: ${{ inputs.FOX_SYNC_BRANCH }}
+        CODENAME: ${{ inputs.DEVICE_NAME }}
+
+    - name: 🛰️ Post Build
+      shell: bash
+      env:
+        TG_CHAT_ID: ${{ inputs.TG_CHAT_ID }}
+        TG_TOKEN: ${{ inputs.TG_TOKEN }}
+        FOX_BRANCH: ${{ inputs.FOX_SYNC_BRANCH }}
+        CODENAME: ${{ inputs.DEVICE_NAME }}
+      run: |
+        source config.sh
+        post_message
