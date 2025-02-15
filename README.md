@@ -33,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
     permissions: write-all
     steps:
     - name: Checkout
@@ -74,8 +75,9 @@ jobs:
 | COMMON_PATH | false | Path On Your Common Directory | common/vivo/1938 |
 | MAINTAINER_URL | false | Image size must be 192x192 | https://github.com/username/project |
 | GH_RELEASE | true | Upload Build To Github Release | Default is [false] |
-| TG_CHAT_ID | false | Telegram Chat ID | -123456789 |
-| TG_TOKEN | false | Telegram Bot Token | 123456:12345678987654321 |
+| TG_CHAT_ID | false | Telegram Chat ID (secrets) | -123456789 |
+| TG_TOKEN | false | Telegram Bot Token (secrets) | 123456:12345678987654321 |
+| GH_TOKEN | env | Your token on github (secrets) | gpgxxxxxxxxxxd |
 
 ## Credits
 - [slimhub_actions](https://github.com/rokibhasansagar/slimhub_actions)
