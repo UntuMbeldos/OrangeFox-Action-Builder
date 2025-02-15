@@ -63,6 +63,10 @@ inputs:
     description: 'Image size must be 192x192'
     required: true
     default: 'https://i.imgur.com/MpuntQt.png'
+  GH_RELEASE:
+    description: 'Upload Build To Github Release'
+    required: true
+    default: 'true'
   TG_CHAT_ID:
     description: 'Telegram Chat ID'
     required: false
@@ -179,6 +183,7 @@ runs:
         echo "ORF_TIME=${EV10}" >> $GITHUB_ENV
 
     - name: 📤 Upload to Release
+      if: ${{ inputs.GH_RELEASE }} == 'true'
       uses: softprops/action-gh-release@v2
       with:
         files: |
@@ -200,6 +205,7 @@ runs:
         CODENAME: ${{ inputs.DEVICE_NAME }}
 
     - name: 🛰️ Post Build
+      if: ${{ inputs.GH_RELEASE }} == 'true'
       shell: bash
       env:
         TG_CHAT_ID: ${{ inputs.TG_CHAT_ID }}
