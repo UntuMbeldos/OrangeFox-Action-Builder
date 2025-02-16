@@ -115,6 +115,8 @@ runs:
         mkdir -p ${GITHUB_ACTION_PATH}/OrangeFox && cd ${GITHUB_ACTION_PATH}/OrangeFox
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+        unset GITHUB_TOKEN
+        gh auth login --with-token <<< ${GITHUB_TOKEN}
         git clone ${{ inputs.FOX_SYNC }} && cd sync
         ./orangefox_sync.sh --branch ${{ inputs.FOX_SYNC_BRANCH }} --path ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
         cd ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
@@ -206,7 +208,6 @@ runs:
         if [[ "${{ inputs.GH_RELEASE }}" == true ]]; then
             source config.sh
             bash notes.sh
-            gh auth login --with-token <<< ${GH_TOKEN}
             gh release create ${{ github.run_id }} ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/* --title "🦊 OrangeFox Recovery for ${{ env.DEVICE }} (${{ env.CODENAME }}) // ${{ env.BUILD_DATE }}" -F ${GITHUB_ACTION_PATH}/release-notes.md
             post_message
         else

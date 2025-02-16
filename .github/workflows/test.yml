@@ -8,8 +8,7 @@ jobs:
     name: 🦊 Building OrangeFox Recovery
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     permissions: write-all
     steps:
     - name: Checkout
