@@ -17,6 +17,8 @@ jobs:
     - name: OrangeFox Build
       uses: ./
       with:
+        USER_NAME: 'UntuKemeng'
+        USER_EMAIL: 'jarbull87@gmail.com'
         DEVICE_TREE: 'https://github.com/UntuKemeng/ORF_device_vivo_1938'
         DEVICE_TREE_BRANCH: '12.1'
         DEVICE_PATH: 'device/vivo/1938'

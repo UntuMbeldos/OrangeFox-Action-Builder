@@ -41,6 +41,8 @@ jobs:
     - name: OrangeFox Build
       uses: UntuMbeldos/OrangeFox-Action-Builder@v1
       with:
+        USER_NAME: 'YourName'
+        USER_EMAIL: 'YourE-mail@gmail.com'
         DEVICE_TREE: 'https://github.com/UntuKemeng/ORF_device_vivo_1938'
         DEVICE_TREE_BRANCH: '12.1'
         DEVICE_PATH: 'device/vivo/1938'
@@ -61,6 +63,8 @@ jobs:
 ## Inputs
 | input               | required | description | example value |
 |---------------------|----------|-------------|---------|
+| USER_NAME | true | Name in GitHub Account | Your Name |
+| USER_EMAIL | true | E-mail in GitHub Account | abcdefg@gmail.com |
 | KERNEL_TREE | false | URL of Android kernel source code for your phone | https://github.com/username/project |
 | KERNEL_BRANCH | false | Branch On Your Kernel Tree | 12.1 |
 | KERNEL_PATH | false | Path On Your Kernel Directory | kernel/vivo/1938 |

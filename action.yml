@@ -15,6 +15,14 @@ inputs:
     description: "Branch On Orangefox For Sync"
     required: false
     default: "12.1"
+  USER_NAME:
+    description: 'Name in GitHub Account'
+    required: true
+    default: ''
+  USER_EMAIL:
+    description: 'E-mail in GitHub Account'
+    required: true
+    default: ''
   KERNEL_TREE:
     description: 'Kernel Tree On Your Device'
     required: false
@@ -113,8 +121,8 @@ runs:
         source config.sh
         echo -e ${cya} "Sync OrangeFox Recovery..."
         mkdir -p ${GITHUB_ACTION_PATH}/OrangeFox && cd ${GITHUB_ACTION_PATH}/OrangeFox
-        git config --global user.name "${{ github.actor }}"
-        git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+        git config --global user.name "${{ inputs.USER_NAME }}"
+        git config --global user.email "${{ inputs.USER_EMAIL }}"
         echo "${GITHUB_TOKEN}" >> ikitoken.txt
         unset GITHUB_TOKEN
         gh auth login --with-token <<< ikitoken.txt
