@@ -209,7 +209,7 @@ runs:
         if [[ "${{ inputs.GH_RELEASE }}" == true ]]; then
             source config.sh
             bash notes.sh
-            gh release create ${{ github.run_id }} ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/* --title "🦊 OrangeFox Recovery for ${{ env.DEVICE }} (${{ env.CODENAME }}) // ${{ env.BUILD_DATE }}" -F ${GITHUB_ACTION_PATH}/release-notes.md
+            gh release create ${{ github.run_id }} ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/* --title "🦊 OrangeFox Recovery for ${{ env.DEVICE }} (${{ env.CODENAME }}) // ${{ env.BUILD_DATE }}" -F ${GITHUB_ACTION_PATH}/release-notes.md -R "https://github.com/${{ github.repository }}"
             post_message
         else
             echo -e ${cya} "##########################################"
