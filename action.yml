@@ -204,20 +204,20 @@ runs:
         EV5=$(sha1sum ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f1)
         EV6=$(cd ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/${{ inputs.DEVICE_PATH }} && git log --pretty=format:'%s' -1)
         EV10=$(grep "#### build completed successfully" ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/build.log -m 1 | cut -d '(' -f 2)
-        echo "BUILD_DATE=${EV1}" >> $GITHUB_ENV
-        echo "DEVICE=${EV2}" >> $GITHUB_ENV
-        echo "ORF_SIZE=${EV3}" >> $GITHUB_ENV
-        echo "ORF_MD5=${EV4}" >> $GITHUB_ENV
-        echo "ORF_SHA1=${EV5}" >> $GITHUB_ENV
-        echo "DT_COMMIT=${EV6}" >> $GITHUB_ENV
-        echo "ORF_ACTOR=${{ github.actor }}" >> $GITHUB_ENV
-        echo "ORF_REPONAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
-        echo "ORF_ID=${{ github.run_id }}" >> $GITHUB_ENV
-        echo "ORF_TIME=${EV10}" >> $GITHUB_ENV
+        export BUILD_DATE=${EV1}
+        export DEVICE=${EV2}
+        export ORF_SIZE=${EV3}
+        export ORF_MD5=${EV4}
+        export ORF_SHA1=${EV5}
+        export DT_COMMIT=${EV6}
+        export ORF_ACTOR=${{ github.actor }}
+        export ORF_REPONAME=${{ github.event.repository.name }}
+        export ORF_ID=${{ github.run_id }}
+        export ORF_TIME=${EV10}
         if [[ "${{ inputs.GH_RELEASE }}" == true ]]; then
             source config.sh
             bash notes.sh
-            gh release create ${{ github.run_id }} ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip.md5 --title "🦊 OrangeFox Recovery for ${{ env.DEVICE }} (${{ env.CODENAME }}) // ${{ env.BUILD_DATE }}" -F ${GITHUB_ACTION_PATH}/release-notes.md -R "https://github.com/${{ github.repository }}"
+            gh release create ${{ github.run_id }} ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}/out/target/product/${{ inputs.DEVICE_NAME }}/OrangeFox*.zip.md5 --title "🦊 OrangeFox Recovery for ${DEVICE} (${CODENAME}) // ${BUILD_DATE}" -F ${GITHUB_ACTION_PATH}/release-notes.md -R "https://github.com/${{ github.repository }}"
             post_message
         else
             echo -e ${cya} "##########################################"
