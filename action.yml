@@ -125,7 +125,7 @@ runs:
         git config --global user.email "${{ inputs.USER_EMAIL }}"
         echo "${GITHUB_TOKEN}" >> ikitoken.txt
         unset GITHUB_TOKEN
-        gh auth login --with-token <<< ikitoken.txt
+        gh auth login --with-token < ikitoken.txt
         git clone ${{ inputs.FOX_SYNC }} && cd sync
         ./orangefox_sync.sh --branch ${{ inputs.FOX_SYNC_BRANCH }} --path ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
         cd ${GITHUB_ACTION_PATH}/OrangeFox/fox_${{ inputs.FOX_SYNC_BRANCH }}
